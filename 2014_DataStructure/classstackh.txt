@@ -1,0 +1,24 @@
+
+#pragma once
+
+#include <iostream>
+using namespace std;
+#include <assert.h>
+
+class Stack
+{
+private:
+	int **stack;
+	int sSize;
+	int top;
+public:
+	void initStack(size_t size, int sSize);
+	void clearStack(Stack *sPtr, size_t size, void(*myFree)(void *));
+	int push(int *myPos);
+	int pop(int *myPos);
+	void printStack(const Stack *sPtr, size_t size, void(*myPrint)(void *p1));
+	void destroyStack(Stack *sPtr, size_t size, void(*myFree)(void *p1));
+	int **getMyStack();
+	int getMyTop();
+	void setsSize(int size);
+};

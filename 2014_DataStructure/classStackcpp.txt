@@ -1,0 +1,108 @@
+
+#include "classStack.h"
+
+int **Stack::getMyStack()
+{
+	return this->stack;
+}
+
+void Stack::setsSize(int size)
+{
+	this->sSize = size;
+}
+
+int Stack::getMyTop()
+{
+	return this->top;
+}
+
+void Stack::initStack(size_t size, int sSize)
+{
+	int i;
+
+	this->sSize = sSize;
+	this->stack = (int **)calloc(sSize, size);
+
+	for (int i = 0; i < this->sSize; i++)
+	{
+		this->stack[i] = (int *)calloc(1, size);
+	}
+
+	assert(this->stack != NULL);
+
+	this->sSize = sSize;
+	this->top = 0;
+}
+
+void Stack::clearStack(Stack *sPtr, size_t size, void(*myFree)(void *))
+{
+	int i;
+
+	for (i = sPtr->top; i > 0; i--)
+	{
+		myFree((char *)sPtr->stack + ((i - 1) * size));
+	}
+
+	sPtr->top = 0;
+}
+
+int Stack::push(int *myPos)
+{
+	if (this->top != this->sSize)
+	{
+
+		this->stack[this->top][0] = myPos[0];
+		this->stack[this->top][1] = myPos[1];
+
+		this->top++;
+		return 1;
+	}
+	else
+	{
+		printf("스택이 꽉 찼습니다.\n");
+		return 0;
+	}
+}
+
+int Stack::pop(int *myPos)
+{
+	if (this->top != 0)
+	{
+		myPos[0] = this->stack[this->top - 1][0];
+		myPos[1] = this->stack[this->top - 1][1];
+		this->top--;
+		return 1;
+	}
+
+	printf("저장된 자료가 없습니다.\n");
+	return 0;
+}
+
+void Stack::printStack(const Stack *sPtr, size_t size, void(*myPrint)(void *p1))
+{
+	int i;
+
+	if (sPtr->top == 0)
+	{
+		printf("저장된 자료가 없습니다.");
+		return;
+	}
+	for (i = sPtr->top; i > 0; i--)
+	{
+		myPrint((char *)sPtr->stack + ((i - 1) * size));
+	}
+}
+
+void Stack::destroyStack(Stack *sPtr, size_t size, void(*myFree)(void *p1))
+{
+	int i;
+
+	for (i = sPtr->sSize; i > 0; i--)
+	{
+		myFree((char *)sPtr->stack + (i - 1) * size);
+	}
+	free(sPtr->stack);
+	sPtr->stack = NULL;
+	sPtr->top = 0;
+	sPtr->sSize = 0;
+}

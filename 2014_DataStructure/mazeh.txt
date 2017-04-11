@@ -1,0 +1,16 @@
+
+#pragma once
+
+#include "classStack.h"
+#include <time.h>
+#include <stdlib.h>
+#include <conio.h>
+
+#define SIZE 10
+
+void makeMaze(int(*maze)[SIZE], int *sizep);
+void initMaze(int(*maze)[SIZE], int size);
+int findRoute(int(*maze)[SIZE], int size, Stack *sp);
+int findZero(int(*maze)[SIZE], int size, int * myPos, Stack *sp);
+void printMaze(int(*maze)[SIZE], int size);
+void printRoute(int(*maze)[SIZE], int size);

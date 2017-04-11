@@ -1,0 +1,144 @@
+
+#pragma warning(disable : 4996)
+
+#include "maze.h"
+
+int main()
+{
+	Stack myStack;
+	int maze[SIZE][SIZE];
+	int check;
+	int myPos[2];
+
+	myStack.initStack(sizeof(int *), 100);
+
+	initMaze(maze, SIZE); 
+
+	check = findRoute(maze, SIZE, &myStack); // size 받을 필요가 없다.
+
+
+	if (check == 1)
+	{
+		printRoute(maze, SIZE); // size 받을 필요가 없다.
+		getch();
+	}
+
+	return 0; // destroyStack 부분이 있어야 한다.
+}
+
+void initMaze(int (*maze)[SIZE], int size)
+{ // 미로를 0 혹은 1로 초기화한다.
+	srand((unsigned)time(NULL));
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{ // 먼저 미로 전체를 1로 채운다.
+			maze[i][j] = 1;
+		}
+	}
+
+	for (int i = 1; i < size - 1; i++)
+	{
+		for (int j = 1; j < size - 1; j++)
+		{ // 그 후 0과 1을 구별하여 채운다.
+			if (rand() % 3 == 0)
+			{
+				maze[i][j] = 0;
+			}
+			else
+			{
+				maze[i][j] = 1;
+			}
+		}
+	}
+
+	maze[1][1] = 2; // 미로의 시작점에 2를 대입한다.
+	maze[size - 2][size - 2] = 0; // 미로의 끝점에 0을 대입한다.
+}
+
+int findRoute(int (*maze)[SIZE], int size, Stack *sp)
+{
+	int myPos[2];
+
+	int check;
+
+	myPos[0] = 1; // 내 위치의 x값을 저장한다.
+	myPos[1] = 1; // 내 위치의 y값을 저장한다.
+
+	for (;;)
+	{
+		check = findZero(maze, size, myPos, sp);
+
+		if (check == 1)
+		{
+			if ((myPos[0] == size - 2) && (myPos[1] == size - 2))
+			{
+				return 1;
+			}
+		}
+		else
+		{
+			maze[myPos[1]][myPos[0]] = 3;
+
+			if (sp->pop(myPos) == 0)
+			{
+				printf("길이 없습니다.");
+				return 0;
+			}
+		}
+	}
+}
+
+int findZero(int (*maze)[SIZE], int size, int *myPos, Stack *sp)
+{
+	for (int i = myPos[1] + 1; i >= myPos[1] - 1; i--)
+	{
+		for (int j = myPos[0] + 1; j >= myPos[0] - 1; j--)
+		{
+			if (maze[i][j] == 0)
+			{
+				maze[i][j] = 2; // 돌을 던진다.
+
+				sp->push(myPos);
+
+				myPos[0] = j; // 그 위치로 간다.
+				myPos[1] = i;
+
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+void printMaze(int (*maze)[SIZE], int size)
+{
+	printf("\n");
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			printf("%d", maze[i][j]);
+		}
+		printf("\n");
+	}
+}
+
+void printRoute(int(*maze)[SIZE], int size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			if (maze[i][j] == 2)
+			{
+				maze[i][j] = '#';
+				printf("%c", maze[i][j]);
+				continue;
+			}
+			printf("%d", maze[i][j]);
+		}
+		printf("\n");
+	}
+}
